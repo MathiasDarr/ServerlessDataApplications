@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://dakobed-serverless-apis/1724e995773bbee0fd947e7445ac036c
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Timeout: 10
+      Tracing: Active
+      FunctionName: ProcessKinesisFunction
+      Environment:
+        Variables:
+          deployment: localstack
+      Policies:
+      - S3FullAccessPolicy:
+          BucketName: dakobed-lach-orders
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream:
+              Fn::GetAtt:
+              - OrdersStream
+              - Arn
+            BatchSize: 100
+            StartingPosition: LATEST
+  OrdersStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: OrdersStream
+      ShardCount: 1
+Outputs:
+  FunctionName:
+    Description: Function name
+    Value:
+      Ref: LambdaFunction
+  StreamARN:
+    Description: Stream ARN
+    Value:
+      Fn::GetAtt:
+      - OrdersStream
+      - Arn
