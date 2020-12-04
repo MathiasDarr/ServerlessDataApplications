@@ -8,6 +8,13 @@ Parameters:
     Default: dakobed-lach-orders
 
 Resources:
+  s3bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dakobed-firehose-s3-sink
+      VersioningConfiguration:
+        Status: Suspended
+
   deliverystream:
     DependsOn:
       - deliveryPolicy
@@ -25,20 +32,6 @@ Resources:
         CompressionFormat: UNCOMPRESSED
         Prefix: firehose/
         RoleARN: !GetAtt deliveryRole.Arn
-#        ProcessingConfiguration:
-#          Enabled: 'true'
-#          Processors:
-#            - Parameters:
-#                - ParameterName: LambdaArn
-#                  ParameterValue: !GetAtt myLambda.Arn
-#              Type: Lambda
-#  s3bucket:
-#    Type: AWS::S3::Bucket
-#    Properties:
-#      BucketName: dakobed-firehose-s3
-#      VersioningConfiguration:
-#        Status: Disabled
-
 
   deliveryRole:
     Type: AWS::IAM::Role
@@ -82,18 +75,30 @@ Resources:
       Roles:
         - !Ref deliveryRole
 
-  myLambda:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: lambda-firehose-process/
-      Handler: app.lambda_handler
-      Runtime: python3.7
-      Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /hello
-            Method: get
+
+#        ProcessingConfiguration:
+#          Enabled: 'true'
+#          Processors:
+#            - Parameters:
+#                - ParameterName: LambdaArn
+#                  ParameterValue: !GetAtt myLambda.Arn
+#              Type: Lambda
+
+
+
+
+#  myLambda:
+#    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#    Properties:
+#      CodeUri: lambda-firehose-process/
+#      Handler: app.lambda_handler
+#      Runtime: python3.7
+#      Events:
+#        HelloWorld:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            Path: /hello
+#            Method: get
 
 
 #AWSTemplateFormatVersion: '2010-09-09'

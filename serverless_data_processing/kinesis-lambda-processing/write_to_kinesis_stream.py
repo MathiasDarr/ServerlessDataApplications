@@ -11,6 +11,8 @@ import boto3
 import json
 import time
 import sys
+import uuid
+import datetime
 
 
 def put_kinesis_records(kinesis_client):
@@ -21,9 +23,10 @@ def put_kinesis_records(kinesis_client):
     stream_name = 'OrdersStream'
 
     payload = {
-        'prop': str(5),
-        'timestamp': str(time.time()),
-        'thing_id': 15
+        'orderID': str(uuid.uuid1()),
+        'customerID': 'jerry@gmail.com',
+        'products': [{"product_name": "product1", "quantity": 1}, {"product_name": "product2", "quantity": 4}],
+        'status': 'CREATING'
     }
 
     put_response = kinesis_client.put_record(
@@ -34,8 +37,11 @@ def put_kinesis_records(kinesis_client):
     print(put_response)
 
 
-if __name__ =='__main__':
-    kinesis_client = boto3.client('kinesis', endpoint_url='http://localhost:4566', region_name='us-west-2') if str(sys.argv[1]) == 'local' \
+dtime = datetime.datetime.now()
+
+if __name__ == '__main__':
+    kinesis_client = boto3.client('kinesis', endpoint_url='http://localhost:4566', region_name='us-west-2') if str(
+        sys.argv[1]) == 'local' \
         else boto3.client('kinesis', region_name='us-west-2')
 
     put_kinesis_records(kinesis_client)

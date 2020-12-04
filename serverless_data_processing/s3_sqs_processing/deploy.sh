@@ -2,12 +2,14 @@
 
 if [[ -z $2 ]]
 then
-  stackname=firehose_stack
+  stackname=sqs-s3-processing-stack
 else
   stackname=$2
 fi
 
 echo ${stackname}
+
+rm -rf package.yaml
 
 sam package \
   --template-file template.yaml \
@@ -23,6 +25,9 @@ then
 
 elif [[ $1 == 'local' ]]
 then
+#  aws --endpoint-url=http://localhost:4566 s3 mb s3://dakobed-lach-orders
+  python3 copy_sam_archive.py
+
   aws  --endpoint-url=http://localhost:4566 cloudformation deploy \
       --template-file package.yaml \
       --stack-name ${stackname} \
@@ -30,3 +35,5 @@ then
 else
     echo "choose either local or aws"
 fi
+
+

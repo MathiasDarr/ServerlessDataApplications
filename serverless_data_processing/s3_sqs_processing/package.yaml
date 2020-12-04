@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  BucketName:
+    Type: String
+    Default: dakobed-sqs-transform-bucket
+Resources:
+  S3UploadBucket:
+    Type: AWS::S3::Bucket
+    DependsOn: SQSQueuePolicy
+    Properties:
+      BucketName:
+        Ref: BucketName
+      NotificationConfiguration:
+        QueueConfigurations:
+        - Event: s3:ObjectCreated:Put
+          Queue:
+            Fn::GetAtt:
+            - TransformQueue
+            - Arn
+  TransformQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: TransformQueue
+  SQSQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    DependsOn: TransformQueue
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: '*'
+          Action: SQS:SendMessage
+          Resource: '*'
+          Condition:
+            ArnLike:
+              aws:SourceArn:
+                Fn::Sub: arn:aws:s3:::${BucketName}
+      Queues:
+      - Ref: TransformQueue

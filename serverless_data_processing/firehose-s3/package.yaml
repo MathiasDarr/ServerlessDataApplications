@@ -1,6 +1,16 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Stack for Firehose DeliveryStream S3 Destination.
+Parameters:
+  BucketName:
+    Type: String
+    Default: dakobed-lach-orders
 Resources:
+  s3bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dakobed-firehose-s3-sink
+      VersioningConfiguration:
+        Status: Suspended
   deliverystream:
     DependsOn:
     - deliveryPolicy
@@ -22,12 +32,6 @@ Resources:
           Fn::GetAtt:
           - deliveryRole
           - Arn
-  s3bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: dakobed-firehose-s3
-      VersioningConfiguration:
-        Status: Enabled
   deliveryRole:
     Type: AWS::IAM::Role
     Properties:

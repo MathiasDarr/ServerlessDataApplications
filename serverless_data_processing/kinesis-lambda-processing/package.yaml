@@ -4,7 +4,7 @@ Resources:
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://dakobed-serverless-apis/1724e995773bbee0fd947e7445ac036c
+      CodeUri: s3://dakobed-serverless-apis/c7f841adca218d975845f06805f87ce4
       Handler: app.lambda_handler
       Runtime: python3.7
       Timeout: 10

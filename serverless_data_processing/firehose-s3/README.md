@@ -3,7 +3,6 @@
 
 This serverless application makes use of the following components
 The Cloud formation tempalate deploys a stack with the following resources
-    - Lambda function
     - Kinesis firehose delivery stream  to
 
 
